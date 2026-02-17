@@ -937,7 +937,9 @@
                 coffee: { name: 'Cultivo Café', icon: '☕', desc: 'Todo sobre la industria cafetalera.', color: '#6d4c41' },
                 health: { name: 'Salud', icon: '🏥', desc: 'Bienestar, medicina y estilo de vida.', color: '#2ecc71' },
                 world: { name: 'Mundo', icon: '🌍', desc: 'Actualidad política internacional.', color: '#3498db' },
-                sports: { name: 'Deportes', icon: '⚽', desc: 'Resultados y noticias deportivas.', color: '#f1c40f' }
+                art: { name: 'Arte y Poesía', icon: '🎨', desc: 'Pintura, música, poesía y cultura.', color: '#e67e22' },
+                books: { name: 'Libros', icon: '📚', desc: 'Reseñas de libros y novedades literarias.', color: '#a0522d' },
+                entertainment: { name: 'Entretenimiento', icon: '🎬', desc: 'Cine, series y televisión.', color: '#e74c3c' }
             },
             feeds: {
                 technology: [
@@ -976,13 +978,23 @@
                     { url: 'https://medicalxpress.com/rss-feed/', lang: 'en' },
                     { url: 'https://elpais.com/sociedad/salud/rss.xml', lang: 'es' }
                 ],
-                world: [
-                    { url: 'https://feeds.bbci.co.uk/news/world/rss.xml', lang: 'en' },
-                    { url: 'https://elpais.com/internacional/rss.xml', lang: 'es' }
+                art: [
+                    { url: 'https://elpais.com/cultura/rss.xml', lang: 'es' },
+                    { url: 'https://www.abc.es/rss/2.0/cultura/', lang: 'es' },
+                    { url: 'https://www.smithsonianmag.com/rss/arts-culture/', lang: 'en' },
+                    { url: 'https://poets.org/rss/poems', lang: 'en' }
                 ],
-                sports: [
-                    { url: 'https://www.espn.com/espn/rss/news', lang: 'en' },
-                    { url: 'https://marca.feedsportal.com/rss/futbol/portada.xml', lang: 'es' }
+                books: [
+                    { url: 'https://elpais.com/noticias/resenas-de-libros/rss.xml', lang: 'es' },
+                    { url: 'https://www.estandarte.com/rss/noticias.xml', lang: 'es' },
+                    { url: 'https://www.theguardian.com/books/rss', lang: 'en' },
+                    { url: 'https://npr.org/rss/rss.php?id=1032', lang: 'en' }
+                ],
+                entertainment: [
+                    { url: 'https://elpais.com/cultura/cine/rss.xml', lang: 'es' },
+                    { url: 'https://www.sensacine.com/rss/noticias.xml', lang: 'es' },
+                    { url: 'https://variety.com/feed/', lang: 'en' },
+                    { url: 'https://www.hollywoodreporter.com/feed/', lang: 'en' }
                 ]
             }
         };
