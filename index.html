@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotiPulse v3.0 | Tu Centro de Noticias Premium</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Canva-inspired Palette */
+            --primary: #7d2ae8;
+            --primary-light: #9b51f0;
+            --secondary: #00c4cc;
+            --accent: #ff47ed;
+            --bg-gradient: linear-gradient(135deg, #f6f9fc 0%, #eef2f7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1e1e1e;
+            --text-muted: #5e5e5e;
+            --white: #ffffff;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 20px 40px rgba(125, 42, 232, 0.15);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --navbar-height: 80px;
+
+            /* Dark Mode Variables */
+            --dark-bg: #0f111a;
+            --dark-surface: #1a1d2b;
+            --dark-glass: rgba(26, 29, 43, 0.8);
+            --dark-text: #e1e4eb;
+            --dark-text-muted: #a0a7b5;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f111a 0%, #161925 100%);
+            --text-main: var(--dark-text);
+            --text-muted: var(--dark-text-muted);
+            --glass-bg: var(--dark-glass);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --white: var(--dark-surface);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* --- Header & Layout --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+        }
+
+        /* Breaking News Ticker */
+        .ticker-wrapper {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            right: 0;
+            height: 35px;
+            background: var(--white);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        .ticker-label {
+            background: var(--primary);
+            color: white;
+            padding: 0 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        .ticker-content {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+            padding-left: 20px;
+        }
+
+        .ticker-item {
+            padding: 0 30px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(125, 42, 232, 0.3);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-container {
+            position: relative;
+            display: none;
+            /* Hidden by default on mobile, shown on md+ */
+        }
+
+        @media (min-width: 768px) {
+            .search-container {
+                display: block;
+            }
+        }
+
+        .search-input {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid transparent;
+            padding: 10px 15px 10px 40px;
+            border-radius: 100px;
+            width: 250px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: var(--text-main);
+        }
+
+        [data-theme="dark"] .search-input {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: var(--white);
+            border-color: var(--primary);
+            width: 300px;
+            box-shadow: 0 0 0 4px rgba(125, 42, 232, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--text-main);
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- Sidebar / Categories Navigation --- */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            padding-top: calc(var(--navbar-height) + 35px);
+        }
+
+        aside {
+            background: var(--glass-bg);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px 15px;
+            position: sticky;
+            top: var(--navbar-height);
+            height: calc(100vh - var(--navbar-height));
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        @media (max-width: 992px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            aside {
+                display: none;
+            }
+
+            .mobile-categories {
+                display: flex;
+                overflow-x: auto;
+                padding: 15px;
+                gap: 10px;
+                background: var(--glass-bg);
+                position: sticky;
+                top: var(--navbar-height);
+                z-index: 99;
+                scrollbar-width: none;
+            }
+
+            .mobile-categories::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        .mobile-categories {
+            display: none;
+            /* Oculto por defecto en escritorio */
+        }
+
+        .nav-category {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-category:hover {
+            background: rgba(125, 42, 232, 0.05);
+            color: var(--primary);
+        }
+
+        .nav-category.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 8px 20px rgba(125, 42, 232, 0.2);
+        }
+
+        .nav-category .icon {
+            font-size: 1.2rem;
+        }
+
+        .nav-category .label {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: none;
+        }
+
+        .nav-category.has-unread .status-dot {
+            display: block;
+            animation: pulse-unread 2s infinite;
+        }
+
+        .nav-category.is-read {
+            opacity: 0.8;
+        }
+
+        .nav-category.is-read::after {
+            content: "✓";
+            font-size: 12px;
+            position: absolute;
+            right: 15px;
+            color: var(--secondary);
+        }
+
+        .nav-category.active::after {
+            color: white;
+        }
+
+        @keyframes pulse-unread {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .category-info h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .category-info p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(125, 42, 232, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: var(--text-muted);
+        }
+
+        /* --- News Feed Cards --- */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            perspective: 1000px;
+        }
+
+        .news-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: card-entry 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+
+        @keyframes card-entry {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .news-card:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            box-shadow: var(--card-hover-shadow);
+            border-color: var(--primary-light);
+        }
+
+        .news-card.read {
+            filter: grayscale(0.5);
+            opacity: 0.85;
+        }
+
+        .card-img-wrapper {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        [data-theme="dark"] .card-img-wrapper {
+            background: #222;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .news-card:hover .card-img {
+            transform: scale(1.08);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            z-index: 2;
+        }
+
+        .card-content {
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .read-more {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.3s ease;
+        }
+
+        .read-more:hover {
+            gap: 10px;
+        }
+
+        .card-actions-mini {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-mini-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .action-mini-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-mini-btn.active {
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        /* --- Modal Settings --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .setting-row {
+            margin-bottom: 25px;
+        }
+
+        .setting-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .setting-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            background: var(--white);
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        /* --- Loading / Empty states --- */
+        .loader-container {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 0;
+        }
+
+        .sk-cube-grid {
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+        }
+
+        .sk-cube-grid .sk-cube {
+            width: 33%;
+            height: 33%;
+            background-color: var(--primary);
+            float: left;
+            -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+            animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+        }
+
+        .sk-cube-grid .sk-cube1 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+        }
+
+        .sk-cube-grid .sk-cube2 {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+        }
+
+        .sk-cube-grid .sk-cube3 {
+            -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s;
+        }
+
+        .sk-cube-grid .sk-cube4 {
+            -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s;
+        }
+
+        .sk-cube-grid .sk-cube5 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+        }
+
+        .sk-cube-grid .sk-cube6 {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+        }
+
+        .sk-cube-grid .sk-cube7 {
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+        }
+
+        .sk-cube-grid .sk-cube8 {
+            -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s;
+        }
+
+        .sk-cube-grid .sk-cube9 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+        }
+
+        @-webkit-keyframes sk-cubeGridScaleDelay {
+
+            0%,
+            70%,
+            100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                transform: scale3D(1, 1, 1);
+            }
+
+            35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                transform: scale3D(0, 0, 1);
+            }
+        }
+
+        @keyframes sk-cubeGridScaleDelay {
+
+            0%,
+            70%,
+            100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                transform: scale3D(1, 1, 1);
+            }
+
+            35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                transform: scale3D(0, 0, 1);
+            }
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-illustration {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Notifications Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--text-main);
+            color: var(--white);
+            padding: 15px 25px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 3000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">NotiPulse</div>
+        </div>
+
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Explorar noticias...">
+        </div>
+
+        <div class="header-actions">
+            <button class="icon-btn" id="theme-toggle" title="Cambiar tema">🌙</button>
+            <button class="icon-btn" id="settings-toggle" title="Configuración">⚙️</button>
+            <button class="icon-btn" id="favorites-toggle" title="Favoritos">⭐</button>
+        </div>
+    </header>
+
+    <!-- Breaking News Ticker -->
+    <div class="ticker-wrapper">
+        <div class="ticker-label">ÚLTIMA HORA ⚡</div>
+        <div class="ticker-content" id="breaking-ticker">
+            <div class="ticker-item">Bienvenido a NotiPulse 3.1. Mantente informado con las mejores fuentes globales.
+            </div>
+            <div class="ticker-item">Carga tus temas preferidos para actualizaciones en tiempo real.</div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- Desktop Sidebar -->
+        <aside id="sidebar">
+            <!-- Populated by JS -->
+        </aside>
+
+        <!-- Mobile Horizontal Categories -->
+        <div class="mobile-categories" id="mobile-tabs">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- content -->
+        <main>
+            <div class="content-header">
+                <div class="category-info">
+                    <h1 id="current-category-name">Selecciona un tema</h1>
+                    <p id="current-category-desc">Las noticias más relevantes del día, curadas para ti.</p>
+                </div>
+                <div class="controls-group">
+                    <button class="btn btn-outline" id="mark-all-read">✅ Marcar todo</button>
+                    <button class="btn btn-primary" id="refresh-category">🔄 Actualizar</button>
+                </div>
+            </div>
+
+            <div class="news-grid" id="news-container">
+                <!-- Initial state -->
+                <div class="empty-state">
+                    <div class="empty-illustration">👋</div>
+                    <h2>¡Bienvenido a NotiPulse v3.0!</h2>
+                    <p>Selecciona una categoría a la izquierda para empezar a leer.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-card">
+            <span class="modal-close">×</span>
+            <h2>⚙️ Configuración</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Personaliza tu experiencia de lectura.</p>
+
+            <div class="setting-row">
+                <label class="setting-label">Idioma de las noticias</label>
+                <div class="setting-desc">Filtra las fuentes por idioma preferido.</div>
+                <select id="setting-lang" class="custom-select">
+                    <option value="all">Todos los idiomas</option>
+                    <option value="es">Solo Español 🇪🇸</option>
+                    <option value="en">Solo Inglés 🇬🇧</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">Rango de tiempo</label>
+                <div class="setting-desc">¿Qué tan recientes deben ser las noticias?</div>
+                <select id="setting-time" class="custom-select">
+                    <option value="1">Solo hoy (24h)</option>
+                    <option value="3" selected>Últimos 3 días</option>
+                    <option value="7">Última semana</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">Cantidad por tema</label>
+                <select id="setting-count" class="custom-select">
+                    <option value="20">20 noticias</option>
+                    <option value="50" selected>50 noticias</option>
+                    <option value="100">100 noticias</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;"
+                id="save-settings">Guardar Cambios</button>
+        </div>
+    </div>
+
+    <div class="toast" id="app-toast">
+        <span id="toast-icon">✨</span>
+        <span id="toast-msg">Mensaje de prueba</span>
+    </div>
+
+    <script>
+        // --- Core Configuration & Data ---
+        const config = {
+            version: '3.0',
+            proxy: 'https://corsproxy.io/?',
+            categories: {
+                technology: { name: 'Tecnología', icon: '💻', desc: 'Últimas innovaciones y gadgets.', color: '#7d2ae8' },
+                economy: { name: 'Economía', icon: '💰', desc: 'Mercados, finanzas y negocios.', color: '#00c4cc' },
+                science: { name: 'Ciencia', icon: '🔬', desc: 'Descubrimientos y exploración espacial.', color: '#ff47ed' },
+                design: { name: 'Diseño', icon: '🎨', desc: 'Inspiración visual y herramientas creativas.', color: '#7d2ae8' },
+                programming: { name: 'Desarrollo', icon: '👨‍💻', desc: 'Código, frameworks y carrera dev.', color: '#00c4cc' },
+                coffee: { name: 'Cultivo Café', icon: '☕', desc: 'Todo sobre la industria cafetalera.', color: '#6d4c41' },
+                health: { name: 'Salud', icon: '🏥', desc: 'Bienestar, medicina y estilo de vida.', color: '#2ecc71' },
+                world: { name: 'Mundo', icon: '🌍', desc: 'Actualidad política internacional.', color: '#3498db' },
+                sports: { name: 'Deportes', icon: '⚽', desc: 'Resultados y noticias deportivas.', color: '#f1c40f' }
+            },
+            feeds: {
+                technology: [
+                    { url: 'https://www.wired.com/feed/rss', lang: 'en' },
+                    { url: 'https://techcrunch.com/feed/', lang: 'en' },
+                    { url: 'https://www.xataka.com/index.xml', lang: 'es' },
+                    { url: 'https://hipertextual.com/tecnologia/feed', lang: 'es' }
+                ],
+                economy: [
+                    { url: 'https://cincodias.elpais.com/rss/cincodias/portada.xml', lang: 'es' },
+                    { url: 'https://expansion.feedsportal.com/rss/economia.xml', lang: 'es' },
+                    { url: 'https://finance.yahoo.com/news/rssindex', lang: 'en' },
+                    { url: 'https://www.abc.es/rss/2.0/economia/', lang: 'es' }
+                ],
+                science: [
+                    { url: 'https://www.sciencedaily.com/rss/top/science.xml', lang: 'en' },
+                    { url: 'https://phys.org/rss-feed/', lang: 'en' },
+                    { url: 'https://www.muyinteresante.es/rss', lang: 'es' }
+                ],
+                design: [
+                    { url: 'https://www.designboom.com/feed/', lang: 'en' },
+                    { url: 'https://www.designweek.co.uk/rss', lang: 'en' },
+                    { url: 'https://graffica.info/feed/', lang: 'es' }
+                ],
+                programming: [
+                    { url: 'https://dev.to/feed', lang: 'en' },
+                    { url: 'https://news.ycombinator.com/rss', lang: 'en' },
+                    { url: 'https://www.genbeta.com/category/programacion/rss', lang: 'es' }
+                ],
+                coffee: [
+                    { url: 'https://dailycoffeenews.com/feed/', lang: 'en' },
+                    { url: 'https://perfectdailygrind.com/es/feed/', lang: 'es' },
+                    { url: 'https://infocafes.com/portal/feed/', lang: 'es' }
+                ],
+                health: [
+                    { url: 'https://medicalxpress.com/rss-feed/', lang: 'en' },
+                    { url: 'https://elpais.com/sociedad/salud/rss.xml', lang: 'es' }
+                ],
+                world: [
+                    { url: 'https://feeds.bbci.co.uk/news/world/rss.xml', lang: 'en' },
+                    { url: 'https://elpais.com/internacional/rss.xml', lang: 'es' }
+                ],
+                sports: [
+                    { url: 'https://www.espn.com/espn/rss/news', lang: 'en' },
+                    { url: 'https://marca.feedsportal.com/rss/futbol/portada.xml', lang: 'es' }
+                ]
+            }
+        };
+
+        // --- State Management ---
+        let state = {
+            currentCategory: null,
+            favorites: JSON.parse(localStorage.getItem('np_favorites')) || [],
+            readItems: JSON.parse(localStorage.getItem('np_read')) || [],
+            visitedCategories: JSON.parse(localStorage.getItem('np_visited')) || [],
+            settings: JSON.parse(localStorage.getItem('np_settings')) || {
+                lang: 'all',
+                timeRange: 3,
+                count: 50
+            },
+            theme: localStorage.getItem('np_theme') || 'light',
+            currentNews: []
+        };
+
+        // --- UI Elements ---
+        const elements = {
+            sidebar: document.getElementById('sidebar'),
+            mobileTabs: document.getElementById('mobile-tabs'),
+            newsContainer: document.getElementById('news-container'),
+            categoryName: document.getElementById('current-category-name'),
+            categoryDesc: document.getElementById('current-category-desc'),
+            themeToggle: document.getElementById('theme-toggle'),
+            settingsToggle: document.getElementById('settings-toggle'),
+            settingsModal: document.getElementById('settings-modal'),
+            modalClose: document.querySelector('.modal-close'),
+            saveSettings: document.getElementById('save-settings'),
+            refreshBtn: document.getElementById('refresh-category'),
+            markAllRead: document.getElementById('mark-all-read'),
+            searchInput: document.getElementById('global-search'),
+            toast: document.getElementById('app-toast')
+        };
+
+        // --- Initialization ---
+        function init() {
+            renderNavigation();
+            applyTheme();
+            setupEventListeners();
+            loadInitialState();
+        }
+
+        function renderNavigation() {
+            const categories = Object.keys(config.categories);
+            let sidebarHtml = '';
+            let mobileHtml = '';
+
+            categories.forEach(key => {
+                const cat = config.categories[key];
+                const isActive = state.currentCategory === key;
+                const isRead = state.visitedCategories.includes(key);
+
+                const classNames = `nav-category ${isActive ? 'active' : ''} ${isRead ? 'is-read' : ''}`;
+
+                const itemHtml = `
+                    <div class="${classNames}" data-id="${key}" onclick="switchCategory('${key}')">
+                        <span class="icon">${cat.icon}</span>
+                        <span class="label">${cat.name}</span>
+                        <div class="status-dot"></div>
+                    </div>
+                `;
+                sidebarHtml += itemHtml;
+                mobileHtml += itemHtml;
+            });
+
+            elements.sidebar.innerHTML = `
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding: 0 15px 15px 15px; font-weight: 700;">Categorías</div>
+                ${sidebarHtml}
+            `;
+            elements.mobileTabs.innerHTML = mobileHtml;
+        }
+
+        function loadInitialState() {
+            // Check if any categories were never visited
+            const allCats = Object.keys(config.categories);
+            allCats.forEach(cat => {
+                if (!state.visitedCategories.includes(cat)) {
+                    document.querySelectorAll(`[data-id="${cat}"]`).forEach(el => el.classList.add('has-unread'));
+                }
+            });
+        }
+
+        // --- News Fetching Logic ---
+        async function switchCategory(id) {
+            if (state.currentCategory === id) return;
+
+            state.currentCategory = id;
+
+            // UI Feedback
+            const cat = config.categories[id];
+            elements.categoryName.textContent = `${cat.icon} ${cat.name}`;
+            elements.categoryDesc.textContent = cat.desc;
+
+            // Mark as visited/read
+            if (!state.visitedCategories.includes(id)) {
+                state.visitedCategories.push(id);
+                localStorage.setItem('np_visited', JSON.stringify(state.visitedCategories));
+            }
+
+            document.querySelectorAll('.nav-category').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.id === id) {
+                    el.classList.add('active');
+                    el.classList.remove('has-unread');
+                    el.classList.add('is-read');
+                }
+            });
+
+            fetchNews(id);
+        }
+
+        async function fetchNews(categoryId) {
+            elements.newsContainer.innerHTML = `
+                <div class="loader-container">
+                    <div class="sk-cube-grid">
+                        <div class="sk-cube sk-cube1"></div>
+                        <div class="sk-cube sk-cube2"></div>
+                        <div class="sk-cube sk-cube3"></div>
+                        <div class="sk-cube sk-cube4"></div>
+                        <div class="sk-cube sk-cube5"></div>
+                        <div class="sk-cube sk-cube6"></div>
+                        <div class="sk-cube sk-cube7"></div>
+                        <div class="sk-cube sk-cube8"></div>
+                        <div class="sk-cube sk-cube9"></div>
+                    </div>
+                    <p style="margin-top: 20px; color: var(--text-muted);">Consultando fuentes globales...</p>
+                </div>
+            `;
+
+            const feeds = config.feeds[categoryId].filter(f => state.settings.lang === 'all' || f.lang === state.settings.lang);
+            let combinedNews = [];
+
+            // Robust fetch with multiple proxy fallbacks
+            async function robustFetch(targetUrl, category, lang) {
+                const proxies = [
+                    url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+                    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                    url => `https://api.codetabs.com/v1/proxy?url=${encodeURIComponent(url)}`
+                ];
+
+                for (let proxyFn of proxies) {
+                    try {
+                        const proxyUrl = proxyFn(targetUrl);
+                        const res = await fetch(proxyUrl);
+                        if (!res.ok) continue;
+
+                        let xmlStr = "";
+                        if (proxyUrl.includes("allorigins.win/get")) {
+                            const data = await res.json();
+                            xmlStr = data.contents;
+                        } else {
+                            xmlStr = await res.text();
+                        }
+
+                        if (!xmlStr) continue;
+
+                        const xml = (new DOMParser()).parseFromString(xmlStr, "text/xml");
+                        return parseRSS(xml, category, lang);
+                    } catch (e) {
+                        console.warn(`Falló proxy para ${targetUrl}:`, e);
+                        continue;
+                    }
+                }
+                return [];
+            }
+
+            try {
+                const results = await Promise.all(feeds.map(f => robustFetch(f.url, categoryId, f.lang)));
+                results.forEach(res => combinedNews = [...combinedNews, ...res]);
+
+                // Sort by date & Unique filter
+                combinedNews.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Filter by time range
+                const cutoff = Date.now() - (state.settings.timeRange * 24 * 60 * 60 * 1000);
+                combinedNews = combinedNews.filter(n => n.timestamp > cutoff);
+
+                state.currentNews = combinedNews.slice(0, state.settings.count);
+                renderNews();
+
+                if (combinedNews.length === 0) {
+                    showToast("No se encontraron noticias recientes", "ℹ️");
+                }
+            } catch (err) {
+                console.error("Critical fetch error:", err);
+                showToast("Error crítico al cargar noticias", "⚠️");
+            }
+        }
+
+        function parseRSS(xml, categoryId, lang) {
+            const items = xml.querySelectorAll('item');
+            const result = [];
+
+            items.forEach(item => {
+                const title = item.querySelector('title')?.textContent || 'Sin título';
+                const link = item.querySelector('link')?.textContent || '#';
+                const pubDate = item.querySelector('pubDate')?.textContent || '';
+                const desc = item.querySelector('description')?.textContent || '';
+
+                // Media extraction
+                let img = '';
+                const enclosure = item.querySelector('enclosure[type^="image"]');
+                if (enclosure) img = enclosure.getAttribute('url');
+
+                if (!img) {
+                    const media = item.querySelector('media\\:content, content');
+                    if (media && media.getAttribute('url')) img = media.getAttribute('url');
+                }
+
+                if (!img && desc) {
+                    const temp = document.createElement('div');
+                    temp.innerHTML = desc;
+                    const imgTag = temp.querySelector('img');
+                    if (imgTag) img = imgTag.src;
+                }
+
+                const cleanDesc = desc.replace(/<[^>]*>/g, '').trim().substring(0, 180) + '...';
+                const timestamp = pubDate ? new Date(pubDate).getTime() : Date.now();
+
+                result.push({
+                    title,
+                    link,
+                    summary: cleanDesc,
+                    image: img || `https://source.unsplash.com/800x450/?${categoryId},${title.split(' ')[0]}`,
+                    timestamp,
+                    dateStr: timeSince(timestamp),
+                    category: categoryId,
+                    lang: lang
+                });
+            });
+            return result;
+        }
+
+        function renderNews(customList = null) {
+            const list = customList || state.currentNews;
+
+            if (list.length === 0) {
+                elements.newsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-illustration">📭</div>
+                        <h2>No hay noticias recientes</h2>
+                        <p>Intenta cambiar el rango de tiempo o el idioma en configuración.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Update ticker with top headlines if available
+            updateTicker(list);
+
+            elements.newsContainer.innerHTML = list.map((news, index) => {
+                const isRead = state.readItems.includes(news.link);
+                const isFav = state.favorites.some(f => f.link === news.link);
+
+                // Add staggered animation delay
+                const delay = (index % 12) * 0.1;
+
+                return `
+                    <article class="news-card ${isRead ? 'read' : ''}" data-link="${news.link}" style="animation-delay: ${delay}s">
+                        <div class="card-img-wrapper">
+                            <span class="card-badge" style="background: ${config.categories[news.category].color}33; color: ${config.categories[news.category].color}">${config.categories[news.category].name}</span>
+                            <img src="${news.image}" class="card-img" alt="News" loading="lazy">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-date">🕒 ${news.dateStr}</div>
+                            <h3 class="card-title">${news.title}</h3>
+                            <p class="card-summary">${news.summary}</p>
+                            <div class="card-footer">
+                                <a href="${news.link}" target="_blank" class="read-more" onclick="markAsRead('${news.link}')">
+                                    Ampliar noticia <span>→</span>
+                                </a>
+                                <div class="card-actions-mini">
+                                    <button class="action-mini-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${news.link}')" title="Favoritos">⭐</button>
+                                    <button class="action-mini-btn" onclick="markAsRead('${news.link}')" title="Marcar como leída">✅</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function updateTicker(news) {
+            const ticker = document.getElementById('breaking-ticker');
+            if (!news || news.length === 0) return;
+
+            const highlights = news.slice(0, 5).map(n => `<div class="ticker-item">${n.title}</div>`).join('');
+            ticker.innerHTML = highlights + highlights; // Duplicate for smooth loop
+        }
+
+        // --- Utility Functions ---
+        function timeSince(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " años";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " meses";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " días";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " horas";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " min";
+            return "hace unos segundos";
+        }
+
+        function markAsRead(link) {
+            if (!state.readItems.includes(link)) {
+                state.readItems.push(link);
+                localStorage.setItem('np_read', JSON.stringify(state.readItems));
+
+                // Update UI without full rerender if possible
+                const card = document.querySelector(`[data-link="${link}"]`);
+                if (card) card.classList.add('read');
+            }
+        }
+
+        function toggleFavorite(link) {
+            const index = state.favorites.findIndex(f => f.link === link);
+            if (index === -1) {
+                const item = state.currentNews.find(n => n.link === link);
+                if (item) {
+                    state.favorites.push(item);
+                    showToast("⭐ Añadido a favoritos");
+                }
+            } else {
+                state.favorites.splice(index, 1);
+                showToast("Favorable eliminado");
+            }
+            localStorage.setItem('np_favorites', JSON.stringify(state.favorites));
+            renderNews();
+        }
+
+        function showToast(msg, icon = '✨') {
+            elements.toast.querySelector('#toast-msg').textContent = msg;
+            elements.toast.querySelector('#toast-icon').textContent = icon;
+            elements.toast.classList.add('show');
+            setTimeout(() => elements.toast.classList.remove('show'), 3000);
+        }
+
+        function applyTheme() {
+            document.body.setAttribute('data-theme', state.theme);
+            elements.themeToggle.textContent = state.theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            elements.themeToggle.onclick = () => {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('np_theme', state.theme);
+                applyTheme();
+            };
+
+            elements.settingsToggle.onclick = () => {
+                elements.settingsModal.style.display = 'flex';
+                // Load current values
+                document.getElementById('setting-lang').value = state.settings.lang;
+                document.getElementById('setting-time').value = state.settings.timeRange;
+                document.getElementById('setting-count').value = state.settings.count;
+            };
+
+            elements.modalClose.onclick = () => elements.settingsModal.style.display = 'none';
+            window.onclick = (e) => { if (e.target === elements.settingsModal) elements.settingsModal.style.display = 'none'; };
+
+            elements.saveSettings.onclick = () => {
+                state.settings = {
+                    lang: document.getElementById('setting-lang').value,
+                    timeRange: parseInt(document.getElementById('setting-time').value),
+                    count: parseInt(document.getElementById('setting-count').value)
+                };
+                localStorage.setItem('np_settings', JSON.stringify(state.settings));
+                elements.settingsModal.style.display = 'none';
+                showToast("Configuración guardada", "💾");
+                if (state.currentCategory) fetchNews(state.currentCategory);
+            };
+
+            elements.refreshBtn.onclick = () => {
+                if (state.currentCategory) fetchNews(state.currentCategory);
+            };
+
+            elements.markAllRead.onclick = () => {
+                state.currentNews.forEach(n => markAsRead(n.link));
+                renderNews();
+                showToast("Todo marcado como leído", "✅");
+            };
+
+            elements.searchInput.oninput = (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = state.currentNews.filter(n => n.title.toLowerCase().includes(term) || n.summary.toLowerCase().includes(term));
+                renderNews(filtered);
+            };
+
+            elements.favoritesToggle.onclick = () => {
+                state.currentCategory = null;
+                elements.categoryName.textContent = "⭐ Favoritos";
+                elements.categoryDesc.textContent = "Tus noticias guardadas para leer después.";
+                document.querySelectorAll('.nav-category').forEach(el => el.classList.remove('active'));
+                renderNews(state.favorites);
+            };
+        }
+
+        // Run
+        init();
+    </script>
+</body>
+
+</html>
